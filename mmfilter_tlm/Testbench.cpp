@@ -25,10 +25,9 @@ unsigned char header[54] = {
     0,    0, 0, 0  // important colors
 };
 
-// Note: To be the TLM - initiator
-Testbench::Testbench(sc_module_name n) // define initiator as a submodule
+Testbench::Testbench(sc_module_name n)
     : sc_module(n), initiator("initiator"), output_rgb_raw_data_offset(54) {
-  SC_THREAD(do_mm);
+  SC_THREAD(do_sobel);
 }
 
 int Testbench::read_bmp(string infile_name) {
@@ -119,12 +118,10 @@ int Testbench::write_bmp(string outfile_name) {
   return 0;
 }
 
-void Testbench::do_mm() {
+void Testbench::do_sobel() {
   int x, y, v, u;        // for loop counter
-  unsigned char R, G, B, buf_fifo; // color of R, G, B
+  unsigned char R, G, B, flag; // color of R, G, B
   int adjustX, adjustY, xBound, yBound;
-  //int total;
-
   word data;
   unsigned char mask[4];
   //wait(5 * CLOCK_PERIOD, SC_NS);
@@ -134,9 +131,9 @@ void Testbench::do_mm() {
       adjustY = (MASK_Y % 2) ? 1 : 0; // 1
       xBound = MASK_X / 2;            // 1
       yBound = MASK_Y / 2;            // 1
-
-      if(x==0){
-        buf_fifo = 1; //o_buffer.write(true);//x=0
+      if (x==0){
+        // flag 要設定成true
+        flag = 1;
         for (v = -yBound; v != yBound + adjustY; ++v) {   //-1, 0, 1
           for (u = -xBound; u != xBound + adjustX; ++u) { //-1, 0, 1
             if (x + u >= 0 && x + u < width && y + v >= 0 && y + v < height) {
@@ -154,20 +151,22 @@ void Testbench::do_mm() {
             data.uc[0] = R;
             data.uc[1] = G;
             data.uc[2] = B;
-            data.uc[3] = buf_fifo;
-            mask[0] = 0xff; //maximum
+            data.uc[3] = flag;
+            mask[0] = 0xff;
             mask[1] = 0xff;
             mask[2] = 0xff;
             mask[3] = 0xff;
-            initiator.write_to_socket(MM_FILTER_R_ADDR, mask, data.uc, 4);
+            initiator.write_to_socket(SOBEL_FILTER_R_ADDR, mask, data.uc, 4);
             wait(1 * CLOCK_PERIOD, SC_NS);
           }
         }
       }
-      else{
-        buf_fifo = 0; //o_buffer.write(false);//x!=0
+
+      else {
+        // flag 要設定成false
+        flag = 0;
         for (v = -yBound; v != yBound + adjustY; ++v) {   //-1, 0, 1
-          for (u = -xBound; u != xBound + adjustX; ++u) { //-1, 0, 1
+          for (u = xBound; u != xBound + adjustX; ++u) { //-1, 0, 1
             if (x + u >= 0 && x + u < width && y + v >= 0 && y + v < height) {
               R = *(source_bitmap +
                     bytes_per_pixel * (width * (y + v) + (x + u)) + 2);
@@ -183,12 +182,12 @@ void Testbench::do_mm() {
             data.uc[0] = R;
             data.uc[1] = G;
             data.uc[2] = B;
-            data.uc[3] = buf_fifo;
-            mask[0] = 0xff; //
+            data.uc[3] = flag;
+            mask[0] = 0xff;
             mask[1] = 0xff;
             mask[2] = 0xff;
             mask[3] = 0xff;
-            initiator.write_to_socket(MM_FILTER_R_ADDR, mask, data.uc, 4);
+            initiator.write_to_socket(SOBEL_FILTER_R_ADDR, mask, data.uc, 4);
             wait(1 * CLOCK_PERIOD, SC_NS);
           }
         }
@@ -197,21 +196,20 @@ void Testbench::do_mm() {
       bool done=false;
       int output_num=0;
       while(!done){
-        initiator.read_from_socket(MM_FILTER_CHECK_ADDR, mask, data.uc, 4);
+        initiator.read_from_socket(SOBEL_FILTER_CHECK_ADDR, mask, data.uc, 4);
         output_num = data.sint;
         if(output_num>0) done=true;
       }
+
       wait(10 * CLOCK_PERIOD, SC_NS);
-      initiator.read_from_socket(MM_FILTER_RESULT_ADDR, mask, data.uc, 4);
-      // total = data.sint;
+      initiator.read_from_socket(SOBEL_FILTER_RESULT_ADDR, mask, data.uc, 4);
+
+
+      *(target_bitmap + bytes_per_pixel * (width * y + x) + 2) = data.uc[0];
+      *(target_bitmap + bytes_per_pixel * (width * y + x) + 1) = data.uc[1];
+      *(target_bitmap + bytes_per_pixel * (width * y + x) + 0) = data.uc[2];
       //debug
       //cout << "Now at " << sc_time_stamp() << endl; //print current sc_time
-
-
-      *(target_bitmap + bytes_per_pixel * (width * y + x) + 2) = data.uc[0]; //R
-      *(target_bitmap + bytes_per_pixel * (width * y + x) + 1) = data.uc[1]; //G
-      *(target_bitmap + bytes_per_pixel * (width * y + x) + 0) = data.uc[2]; //B
-
     }
   }
   sc_stop();

@@ -10,19 +10,15 @@ using namespace sc_core;
 #include "Initiator.h"
 #include "filter_def.h"
 
-const int WHITE = 255;
-const int BLACK = 0;
-const int THRESHOLD = 90;
-
 class Testbench : public sc_module {
 public:
-  // Note: To be the TLM - initiator
   Initiator initiator;
 
   SC_HAS_PROCESS(Testbench);
 
   Testbench(sc_module_name n);
   ~Testbench() = default;
+  
 
   int read_bmp(string infile_name);
   int write_bmp(string outfile_name);
@@ -49,6 +45,6 @@ private:
   unsigned char *source_bitmap;
   unsigned char *target_bitmap;
 
-  void do_mm();
+  void do_sobel();
 };
 #endif

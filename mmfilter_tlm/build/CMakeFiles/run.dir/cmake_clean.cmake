@@ -1,6 +1,7 @@
 file(REMOVE_RECURSE
   "CMakeFiles/run"
-  "out.bmp"
+  "cameraman_noise_out.bmp"
+  "house_noise_out.bmp"
 )
 
 # Per-language clean rules from dependency scanning.

@@ -5,7 +5,7 @@ using namespace std;
 // Wall Clock Time Measurement
 #include <sys/time.h>
 
-#include "MMFilter.h"
+#include "Filter.h"
 #include "Testbench.h"
 
 // TIMEVAL STRUCT IS Defined ctime
@@ -22,8 +22,8 @@ int sc_main(int argc, char **argv) {
     return 0;
   }
   Testbench tb("tb");
-  MMFilter mm_filter("mm_filter");
-  tb.initiator.i_skt(mm_filter.t_skt);
+  Filter filter("filter");
+  tb.initiator.i_skt(filter.t_skt);
 
   tb.read_bmp(argv[1]);
   sc_start();

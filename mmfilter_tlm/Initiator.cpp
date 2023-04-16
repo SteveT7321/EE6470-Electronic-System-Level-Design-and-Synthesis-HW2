@@ -1,6 +1,7 @@
 #include "Initiator.h"
 
-Initiator::Initiator(sc_module_name n) : sc_module(n), i_skt("i_skt") {}
+Initiator::Initiator(sc_module_name n) : sc_module(n), i_skt("i_skt") {
+}
 
 int Initiator::read_from_socket(unsigned long int addr, unsigned char mask[],
                                 unsigned char rdata[], int dataLen) {
@@ -43,13 +44,13 @@ int Initiator::write_to_socket(unsigned long int addr, unsigned char mask[],
 } // writeUpcall()
 
 void Initiator::do_trans(tlm::tlm_generic_payload &trans) {
-  sc_core::sc_time dummyDelay = sc_core::SC_ZERO_TIME;
+  //sc_core::sc_time dummyDelay = sc_core::SC_ZERO_TIME;
+  sc_core::sc_time dummyDelay = sc_time(1, SC_NS);
 
   // Call the transport and wait for no time, which allows the thread to yield
   // and others to get a look in!
 
   i_skt->b_transport(trans, dummyDelay);
-  //wait(sc_core::SC_ZERO_TIME);
   wait(dummyDelay);
 
 } // do_trans()

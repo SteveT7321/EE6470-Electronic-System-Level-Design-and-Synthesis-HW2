@@ -3,13 +3,11 @@
 #include <systemc>
 using namespace sc_core;
 
-// Note: To be the TLM - initiator
 #include "tlm"
 #include "tlm_utils/simple_initiator_socket.h"
 
 class Initiator : public sc_module {
 public:
-  // Note: To be the TLM - initiator
   tlm_utils::simple_initiator_socket<Initiator> i_skt;
 
   SC_HAS_PROCESS(Initiator);
@@ -23,5 +21,6 @@ public:
 
   void do_trans(tlm::tlm_generic_payload &trans);
   tlm::tlm_generic_payload trans;
+  //tlm_utils::tlm_quantumkeeper m_qk;
 };
 #endif

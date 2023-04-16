@@ -66,14 +66,20 @@ include CMakeFiles/run.dir/compiler_depend.make
 # Include the progress variables for this target.
 include CMakeFiles/run.dir/progress.make
 
-CMakeFiles/run: out.bmp
+CMakeFiles/run: cameraman_noise_out.bmp
+CMakeFiles/run: house_noise_out.bmp
 
-out.bmp: mm
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/user/ee6470/HW2/mmfilter_tlm/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Generating out.bmp"
-	./mm /home/user/ee6470/HW2/mmfilter_tlm/lena_std_short.bmp ./out.bmp
+cameraman_noise_out.bmp: sobel
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/user/ee6470/HW2/mmfilter_tlm/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Generating cameraman_noise_out.bmp"
+	./sobel /home/user/ee6470/HW2/mmfilter_tlm/cameraman_noise.bmp ./cameraman_noise_out.bmp
+
+house_noise_out.bmp: sobel
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/user/ee6470/HW2/mmfilter_tlm/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Generating house_noise_out.bmp"
+	./sobel /home/user/ee6470/HW2/mmfilter_tlm/house_noise.bmp ./house_noise_out.bmp
 
 run: CMakeFiles/run
-run: out.bmp
+run: cameraman_noise_out.bmp
+run: house_noise_out.bmp
 run: CMakeFiles/run.dir/build.make
 .PHONY : run
 

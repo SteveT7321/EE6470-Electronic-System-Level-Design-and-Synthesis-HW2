@@ -1,0 +1,5 @@
+/home/user/ee6470/HW2/mmfilter_qk/build/CMakeFiles/sobel.dir
+/home/user/ee6470/HW2/mmfilter_qk/build/CMakeFiles/run.dir
+/home/user/ee6470/HW2/mmfilter_qk/build/CMakeFiles/check.dir
+/home/user/ee6470/HW2/mmfilter_qk/build/CMakeFiles/edit_cache.dir
+/home/user/ee6470/HW2/mmfilter_qk/build/CMakeFiles/rebuild_cache.dir
